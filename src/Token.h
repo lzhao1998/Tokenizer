@@ -36,7 +36,7 @@ typedef struct {
   uint32_t length;
   char *originalStr;         ///
   char *str;
-} Token;
+}  ;
 
 typedef struct {
   TokenType type;
@@ -88,4 +88,3 @@ void freeToken(void *token);
 void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo);
 
 #endif // Token_H
-

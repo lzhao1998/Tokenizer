@@ -25,7 +25,7 @@ void test_skipWhiteSpaces_given____Hello_string_expect_to_skip_till_H() {
   TEST_ASSERT_EQUAL('H', *endPtr);
 }
 
-void test_getToken_given_123_expect_Integer_Token_123() {
+void xtest_getToken_given_123_expect_Integer_Token_123() {
   Token *token;
   IntegerToken *intToken;
   Tokenizer *tokenizer;
@@ -41,7 +41,7 @@ void test_getToken_given_123_expect_Integer_Token_123() {
   freeToken(intToken);
 }
 
-void test_getToken_given_0xface_expect_Integer_Token_0xface() {
+void xtest_getToken_given_0xface_expect_Integer_Token_0xface() {
   Token *token;
   IntegerToken *intToken;
   Tokenizer *tokenizer;
@@ -55,4 +55,19 @@ void test_getToken_given_0xface_expect_Integer_Token_0xface() {
   TEST_ASSERT_EQUAL_STRING("0xface", intToken->str);
   TEST_ASSERT_EQUAL(0xface, intToken->value);
   freeToken(intToken);
+}
+
+void test_getToken_given_0xface_expect_Integer_Token_0xface() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\"hello\"");
+  token = getToken(tokenizer);
+  strToken = (StringToken *)token;
+
+  TEST_ASSERT_NOT_NULL(strToken);
+  TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
+  TEST_ASSERT_EQUAL_STRING("\"hello\"", strToken->str);
+  freeToken(strToken);
 }

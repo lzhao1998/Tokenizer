@@ -80,4 +80,3 @@ void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo) {
     printf("~");
   putchar('\n');
 }
-
