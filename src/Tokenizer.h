@@ -4,6 +4,12 @@
 #include "Common.h"
 #include "Token.h"
 
+typedef struct {
+  char *str;
+  int index;
+  Token *currentToken;
+} Tokenizer;
+
 Tokenizer *initTokenizer(char *stringToTokenize);
 Token *advanceToken(Tokenizer *tokenizer);
 Token *getToken(Tokenizer *tokenizer);

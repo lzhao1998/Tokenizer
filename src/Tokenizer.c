@@ -11,77 +11,86 @@
 #include "Exception.h"
 
 Tokenizer *initTokenizer(char *stringToTokenize) {
-  if(stringToTokenize == NULL)
-  {
-    return NULL; //throw error
-  }
-  int i = 0; //to get the string length
   Tokenizer *token = NULL;
   token = (Tokenizer*)malloc(sizeof(Tokenizer));
   token->str = stringToTokenize;
-  token->index = 0;
+  token->index = 0;					//start for index 0 to count
+  return (Tokenizer*)token;
+}
 
-  while(stringToTokenize[index] == ' ') //skip the space
+Token *getToken(Tokenizer *tokenizer) {
+  int i = 0, startColumn = 0, length = 0;
+  Token *token = NULL;
+  token = (Token*)malloc(sizeof(Token));
+  if(tokenizer->str[tokenizer->index] == NULL) //if it is NULL, create NULL token (DONE)
   {
-    index++;
+    token = createNullToken();
+    return token;
+  }
+  while(tokenizer->str[tokenizer->index] == ' ') //skip the unwanted space (DONE)
+  {
+    tokenizer->index++;
   }
 
-  if(stringToTokenize[index] == '"')//  || stringToTokenize[index] == ''')
+  if(tokenizer->str[tokenizer->index] == NULL) //after skip space and become NULL, create NULL token (DONE)
   {
-    token->currentToken->originalStr = stringToTokenize;
-    token->currentToken->startColumn = index;
-    while(stringToTokenize[index] != '"')
-    {
-      if(stringToTokenize[index] == '\0')
+    token = createNullToken();
+    return token;
+  }
+  else if(tokenizer->str[tokenizer->index] == '\"') //if detect " , check it is string or invalid token
+  {
+    tokenizer->index++;
+    startColumn = tokenizer->index;
+    while (tokenizer->str[tokenizer->index] != '\"') {
+      if(tokenizer->str[tokenizer->index] == NULL)
       {
-        return 0;//RETURN ERROR
+        token = createInvalidToken(tokenizer->str, startColumn, length);
+        return token;
       }
-      else
-      {
-        index++;
-        i++;
-      }
+      tokenizer->index++;
+      i++;
     }
-    token->currentToken->type = TOKEN_STRING_TYPE;
-    token->currentToken->length = i;
-    char *temp = (char*)malloc(index - i + 1);
-    int k =0;
-    printf("length is %d\n", (i-index));
-    for(i;i<(index+1);i++)
+    char *temp = (char*)malloc(i + 1);	//get the length of the string and last is for NULL/end of string
+    printf("length for temp is %d\n",strlen(temp));
+    tokenizer->index++;
+    length = i;     //length = i , because i start from 0 so length no need to equal i - 1
+    printf("length is %d\n", length);
+    for(int k = 0; k < (i+1); k++)
     {
-      if(i == index)
+      if(k == i)
       {
         temp[k] = '\0';
       }
       else
       {
-        temp[k] = str[j];
+        temp[k] = tokenizer->str[startColumn + k];
+        printf("startColumn + k is %c\n", tokenizer->str[startColumn + k]);
+        printf("tempA is %s\n", temp);
         k++;
       }
     }
-    strcpy(token->currentToken->str,temp);
-    free(temp);
-    return (Tokenizer*)token;
+    printf("str is %s\n", tokenizer->str);
+    printf("tempB is %s\n", temp);
+    token = createStringToken(startColumn, length, tokenizer->str, temp);
+  //strcpy(token->currentToken->str,temp);
+  //  free(temp);
+    //divide to 2 or only one? '  or "
   }
-  else
+  else if(tokenizer->str[tokenizer->index] == '\'')//if detect ' , check it is string, character or invalid token
   {
-    return (Tokenizer*)token;
-  }
-}
 
-Token *getToken(Tokenizer *tokenizer) {
-  if(tokenizer->currentToken->type == TOKEN_STRING_TYPE)
-  {
-    StringToken *strToken = NULL;
-    strToken = (StringToken*)malloc(sizeof(StringToken));
-    strToken->type = tokenizer->currentToken->type;
-    strToken->startColumn = tokenizer->currentToken->startColumn;
-    strToken->length = tokenizer->currentToken->length;
-    strToken->originalStr = tokenizer->currentToken->originalStr;
-    strToken->str = tokenizer->currentToken->str;
   }
-  else
+  else if(isdigit(tokenizer->str[tokenizer->index]) == 1)   //if detect digit, check wether is integer, floating point or invalid token
   {
-    return NULL;
+
   }
+  else if(ispunct(tokenizer->str[tokenizer->index]) == 1)   //if detect punctuation character, check wether is the operator or not
+  {
+
+  }
+  else if(isalpha(tokenizer->str[tokenizer->index]) || tokenizer->str[tokenizer->index] == '_') //if detect _ or alpha, check is identifier or not
+  {return NULL;}
+  else{return NULL;}
+	//return NULL;
+  return token;
 }

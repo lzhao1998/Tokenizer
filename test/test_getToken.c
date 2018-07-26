@@ -57,7 +57,7 @@ void xtest_getToken_given_0xface_expect_Integer_Token_0xface() {
   freeToken(intToken);
 }
 
-void test_getToken_given_0xface_expect_Integer_Token_0xface() {
+void test_getToken_given_string_hello_expect_String_Token_hello() {
   Token *token;
   StringToken *strToken;
   Tokenizer *tokenizer;
@@ -68,6 +68,10 @@ void test_getToken_given_0xface_expect_Integer_Token_0xface() {
 
   TEST_ASSERT_NOT_NULL(strToken);
   TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
-  TEST_ASSERT_EQUAL_STRING("\"hello\"", strToken->str);
+  TEST_ASSERT_EQUAL_STRING("hello", strToken->str);
   freeToken(strToken);
 }
+
+//for throw and catch
+//dumpTokenErrorMessage(ex,1);
+//TEST_FAIL_MESSAGE("throw throw");

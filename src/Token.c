@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <string.h>
 #include "Token.h"
 #include "Common.h"
 
@@ -13,32 +14,65 @@ Token *createNullToken() {
   return token;
 }
 
-Token *createIntegerToken(int value, char *originalString) {
+Token *createIntegerToken(int startColumn, int length, char *originalString, char *str, int value) {
   IntegerToken *token = malloc(sizeof(IntegerToken));
 
   token->type = TOKEN_INTEGER_TYPE;
-  token->originalStr = originalString;
+  token->startColumn = startColumn;
+  token->length = length;
+  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->str = str;
   token->value = value;
 
   return (Token *)token;
 }
 
-Token *createFloatToken(double value, char *originalString) {
+Token *createFloatToken(int startColumn, int length, char *originalString, char *str, double value) {
   FloatToken *token = malloc(sizeof(FloatToken));
 
   token->type = TOKEN_FLOAT_TYPE;
-  token->originalStr = originalString;
+  token->startColumn = startColumn;
+  token->length = length;
+  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->str = str;
   token->value = value;
 
   return (Token *)token;
 }
 
-Token *createIdentifierToken(char *str, char *originalString) {
+Token *createIdentifierToken(int startColumn, int length, char *originalString, char *str) {
   IdentifierToken *token = malloc(sizeof(IdentifierToken));
 
   token->type = TOKEN_IDENTIFIER_TYPE;
-  token->originalStr = originalString;
+  token->startColumn = startColumn;
+  token->length = length;
+  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
   token->str = str;
+
+  return (Token *)token;
+}
+
+Token *createStringToken(int startColumn, int length, char *originalString, char *str) {
+  StringToken *token = malloc(sizeof(StringToken));
+
+  token->type = TOKEN_STRING_TYPE;
+  token->startColumn = startColumn;
+  token->length = length;
+  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->str = str;
+
+  return (Token *)token;
+}
+
+Token *createOperatorToken(int startColumn, int length, char *originalString, char *str, Token *zoken) {
+  OperatorToken *token = malloc(sizeof(OperatorToken));
+
+  token->type = TOKEN_OPERATOR_TYPE;
+  token->startColumn = startColumn;
+  token->length = length;
+  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->str = str;
+  //token *[0]
 
   return (Token *)token;
 }

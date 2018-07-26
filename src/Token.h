@@ -36,7 +36,7 @@ typedef struct {
   uint32_t length;
   char *originalStr;         ///
   char *str;
-}  ;
+} Token;
 
 typedef struct {
   TokenType type;
@@ -73,17 +73,20 @@ typedef struct {
   Token *token[0];
 } OperatorToken;
 
-typedef struct {
-  char *str;
-  int index;
-  Token *currentToken;
-} Tokenizer;
-
 Token *createNullToken();
 Token *createInvalidToken(char *originalString, int start, int len);
+/*
 Token *createIntegerToken(int value, char *originalString);
 Token *createFloatToken(double value, char *originalString);
 Token *createIdentifierToken(char *str, char *originalString);
+Token *createStringToken(uint32_t startColumn, uint32_t length, char *str, char *originalString);*/
+
+Token *createIntegerToken(int startColumn, int length, char *originalString, char *str, int value);
+Token *createFloatToken(int startColumn, int length, char *originalString, char *str, double value);
+Token *createIdentifierToken(int startColumn, int length, char *originalString, char *str);
+Token *createStringToken(int startColumn, int length, char *originalString, char *str);
+Token *createOperatorToken(int startColumn, int length, char *originalString, char *str, Token *token);
+
 void freeToken(void *token);
 void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo);
 
