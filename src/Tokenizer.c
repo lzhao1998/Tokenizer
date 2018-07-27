@@ -44,18 +44,20 @@ Token *getToken(Tokenizer *tokenizer) {
     while (tokenizer->str[tokenizer->index] != '\"') {
       if(tokenizer->str[tokenizer->index] == NULL)
       {
+        length = i;
+        printf("hello INVALID\n");
         token = createInvalidToken(tokenizer->str, startColumn, length);
-        return token;
+        throwException(ERR_INVALID_STRING, token, "ERROR!! INVALID TOKEN");
       }
       tokenizer->index++;
       i++;
     }
-    char *temp = (char*)malloc(i + 1);	//get the length of the string and last is for NULL/end of string
+    char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
+    printf("i + 1 = %d\n",i+1);
     printf("length for temp is %d\n",strlen(temp));
     tokenizer->index++;
     length = i;     //length = i , because i start from 0 so length no need to equal i - 1
-    printf("length is %d\n", length);
-    for(int k = 0; k < (i+1); k++)
+    for(int k = 0; k < (i+1); k = k + 1)
     {
       if(k == i)
       {
@@ -64,14 +66,10 @@ Token *getToken(Tokenizer *tokenizer) {
       else
       {
         temp[k] = tokenizer->str[startColumn + k];
-        printf("startColumn + k is %c\n", tokenizer->str[startColumn + k]);
-        printf("tempA is %s\n", temp);
-        k++;
       }
     }
-    printf("str is %s\n", tokenizer->str);
-    printf("tempB is %s\n", temp);
     token = createStringToken(startColumn, length, tokenizer->str, temp);
+    //free(temp);
   //strcpy(token->currentToken->str,temp);
   //  free(temp);
     //divide to 2 or only one? '  or "

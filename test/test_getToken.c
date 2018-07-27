@@ -7,6 +7,7 @@
 #include "Tokenizer.h"
 #include "CException.h"
 #include "Exception.h"
+#include <stdio.h>
 
 void setUp(void) {}
 
@@ -56,7 +57,7 @@ void xtest_getToken_given_0xface_expect_Integer_Token_0xface() {
   TEST_ASSERT_EQUAL(0xface, intToken->value);
   freeToken(intToken);
 }
-
+/*
 void test_getToken_given_string_hello_expect_String_Token_hello() {
   Token *token;
   StringToken *strToken;
@@ -71,6 +72,74 @@ void test_getToken_given_string_hello_expect_String_Token_hello() {
   TEST_ASSERT_EQUAL_STRING("hello", strToken->str);
   freeToken(strToken);
 }
+
+void test_getToken_given_string_space_hello_expect_String_Token_hello() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("    \"hello\"");
+  token = getToken(tokenizer);
+  strToken = (StringToken *)token;
+
+  TEST_ASSERT_NOT_NULL(strToken);
+  TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
+  TEST_ASSERT_EQUAL_STRING("hello", strToken->str);
+  freeToken(strToken);
+}
+
+void test_getToken_given_string_hello_space_expect_String_Token_hello() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\"hello\"    ");
+  token = getToken(tokenizer);
+  strToken = (StringToken *)token;
+
+  TEST_ASSERT_NOT_NULL(strToken);
+  TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
+  TEST_ASSERT_EQUAL_STRING("hello", strToken->str);
+  freeToken(strToken);
+}
+
+void test_getToken_given_string_hello_space_world_expect_String_Token_hello_world() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\"hello  world\"");
+  token = getToken(tokenizer);
+  strToken = (StringToken *)token;
+
+  TEST_ASSERT_NOT_NULL(strToken);
+  TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
+  TEST_ASSERT_EQUAL_STRING("hello  world", strToken->str);
+  freeToken(strToken);
+}*/
+
+void test_getToken_given_string_hello_without_closing_ampersand_sign_expect_return_TOKEN_INVALID_TYPE() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\"hello");
+  //token = getToken(tokenizer);
+  //strToken = (StringToken *)token;
+
+  Try{
+    token = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 2);
+    TEST_ASSERT_NOT_NULL(strToken);
+    TEST_ASSERT_EQUAL(TOKEN_INVALID_TYPE, strToken->type);
+    TEST_ASSERT_EQUAL_STRING("hello", strToken->str);
+  }
+
+  freeToken(strToken);
+}
+
 
 //for throw and catch
 //dumpTokenErrorMessage(ex,1);
