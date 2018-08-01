@@ -6,6 +6,7 @@
 #define ERR_INVALID_INSTRUCTION   20
 #define ERR_INVALID_OPERAND       21
 #define ERR_INVALID_STRING		    30
+#define ERR_INVALID_CHAR	   	    32
 #define ERR_INVALID_INTEGER       41
 #define ERR_INVALID_FLOAT         42
 

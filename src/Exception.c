@@ -8,6 +8,7 @@
 void throwException(int errorCode, void *data, char *message, ...) {
   va_list args;
   char *buffer;
+  buffer = NULL;
   int length;
   Exception *e;
 

@@ -7,14 +7,15 @@
 #include "Exception.h"
 
 typedef enum {
-  TOKEN_UNKNOWN_TYPE,
-  TOKEN_NULL_TYPE,
-  TOKEN_INVALID_TYPE,
-  TOKEN_INTEGER_TYPE,
-  TOKEN_OPERATOR_TYPE,
-  TOKEN_FLOAT_TYPE,
-  TOKEN_STRING_TYPE,
-  TOKEN_IDENTIFIER_TYPE,
+  TOKEN_UNKNOWN_TYPE,   //0
+  TOKEN_NULL_TYPE,      //1
+  TOKEN_INVALID_TYPE,   //2
+  TOKEN_INTEGER_TYPE,   //3
+  TOKEN_OPERATOR_TYPE,  //4
+  TOKEN_FLOAT_TYPE,     //5
+  TOKEN_STRING_TYPE,    //6
+  TOKEN_CHAR_TYPE,      //7
+  TOKEN_IDENTIFIER_TYPE,//8
 } TokenType;
 
 typedef enum {
@@ -85,6 +86,7 @@ Token *createIntegerToken(int startColumn, int length, char *originalString, cha
 Token *createFloatToken(int startColumn, int length, char *originalString, char *str, double value);
 Token *createIdentifierToken(int startColumn, int length, char *originalString, char *str);
 Token *createStringToken(int startColumn, int length, char *originalString, char *str);
+Token *createCharToken(int startColumn, int length, char *originalString, char *str);
 Token *createOperatorToken(int startColumn, int length, char *originalString, char *str, Token *token);
 
 void freeToken(void *token);

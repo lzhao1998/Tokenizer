@@ -66,6 +66,20 @@ Token *createStringToken(int startColumn, int length, char *originalString, char
   return (Token *)token;
 }
 
+Token *createCharToken(int startColumn, int length, char *originalString, char *str) {
+  CharConstToken *token = malloc(sizeof(CharConstToken));
+
+  token->type = TOKEN_CHAR_TYPE;
+  token->startColumn = startColumn;
+  token->length = length;
+  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->str = str;
+  //strcpy(token->originalStr,originalString);
+  //strcpy(token->str,str);
+
+  return (Token *)token;
+}
+
 Token *createOperatorToken(int startColumn, int length, char *originalString, char *str, Token *zoken) {
   OperatorToken *token = malloc(sizeof(OperatorToken));
 
@@ -81,6 +95,7 @@ Token *createOperatorToken(int startColumn, int length, char *originalString, ch
 
 Token *createInvalidToken(char *originalString, int start, int len) {
   char *endPtr;
+  endPtr = NULL;
   Token *token = malloc(sizeof(Token));
 
   token->type = TOKEN_INVALID_TYPE;
@@ -88,10 +103,9 @@ Token *createInvalidToken(char *originalString, int start, int len) {
   endPtr = skipNonWhiteSpaces(&originalString[start + len]);
   len = (int)(endPtr - originalString) - start;
   token->str = createSubstring(originalString, start, len);
-//  printf("InvalidToken: %s\n", token->str);
+  //printf("InvalidToken: %s\n", token->str);
   token->startColumn = start;
   token->length = len;
-
   return token;
 }
 

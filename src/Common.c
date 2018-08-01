@@ -12,7 +12,7 @@ char *skipWhiteSpaces(char *str) {
 
 // skip the all things except space
 char *skipNonWhiteSpaces(char *str) {
-  while(*str != ' ' && *str != '\t') str++;
+  while(*str != ' ' && *str != '\t' && *str != '\0') str++;
   return str;
 }
 
@@ -25,8 +25,8 @@ char *skipAlphanumerals(char *str) {
 char *createSubstring(char *str, int start, int len) {
   char *newStr = malloc(len + 1);
 
-//  printf("%s (%d, %d)\n", str, start, len);
-
+  //printf("%s (%d, %d)\n", str, start, len);
+  
   memcpy(newStr, &str[start], len);
   newStr[len] = 0;
   return newStr;

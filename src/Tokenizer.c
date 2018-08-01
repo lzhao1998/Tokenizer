@@ -22,7 +22,7 @@ Token *getToken(Tokenizer *tokenizer) {
   int i = 0, startColumn = 0, length = 0;
   Token *token = NULL;
   token = (Token*)malloc(sizeof(Token));
-  if(tokenizer->str[tokenizer->index] == NULL) //if it is NULL, create NULL token (DONE)
+  if(tokenizer->str[tokenizer->index] == '\0') //if it is NULL, create NULL token (DONE)
   {
     token = createNullToken();
     return token;
@@ -32,7 +32,7 @@ Token *getToken(Tokenizer *tokenizer) {
     tokenizer->index++;
   }
 
-  if(tokenizer->str[tokenizer->index] == NULL) //after skip space and become NULL, create NULL token (DONE)
+  if(tokenizer->str[tokenizer->index] == '\0') //after skip space and become NULL, create NULL token (DONE)
   {
     token = createNullToken();
     return token;
@@ -42,19 +42,18 @@ Token *getToken(Tokenizer *tokenizer) {
     tokenizer->index++;
     startColumn = tokenizer->index;
     while (tokenizer->str[tokenizer->index] != '\"') {
-      if(tokenizer->str[tokenizer->index] == NULL)
+      if(tokenizer->str[tokenizer->index] == '\0')
       {
         length = i;
-        printf("hello INVALID\n");
-        token = createInvalidToken(tokenizer->str, startColumn, length);
+        //startColumn - 1 is because needed include " sign
+        //length + 1 is because needed include " sign
+        token = createInvalidToken(tokenizer->str, startColumn-1, length+1);
         throwException(ERR_INVALID_STRING, token, "ERROR!! INVALID TOKEN");
       }
       tokenizer->index++;
       i++;
     }
     char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
-    printf("i + 1 = %d\n",i+1);
-    printf("length for temp is %d\n",strlen(temp));
     tokenizer->index++;
     length = i;     //length = i , because i start from 0 so length no need to equal i - 1
     for(int k = 0; k < (i+1); k = k + 1)
@@ -76,7 +75,53 @@ Token *getToken(Tokenizer *tokenizer) {
   }
   else if(tokenizer->str[tokenizer->index] == '\'')//if detect ' , check it is string, character or invalid token
   {
-
+    tokenizer->index++;
+    startColumn = tokenizer->index;
+    while (tokenizer->str[tokenizer->index] != '\'') {
+      if(tokenizer->str[tokenizer->index] == '\0')
+      {
+        length = i;
+        //startColumn - 1 is because needed include " sign
+        //length + 1 is because needed include " sign
+        token = createInvalidToken(tokenizer->str, startColumn-1, length+1);
+        throwException(ERR_INVALID_STRING, token, "ERROR!! INVALID STRING TOKEN");
+      }
+      tokenizer->index++;
+      i++;
+    }
+    char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
+    tokenizer->index++;
+    length = i;     //length = i , because i start from 0 so length no need to equal i - 1
+    //if length = 1 do char, else do string
+    if(length == 1)
+    {
+      //if is char, create CHAR_TOKEN
+      //else throw else
+      if(isalpha(tokenizer->str[startColumn]) != 0){
+        temp[0] = tokenizer->str[startColumn];
+        temp[1] = '\0';
+      }
+      else{
+        token = createInvalidToken(tokenizer->str, startColumn-1, length+1);
+        throwException(ERR_INVALID_CHAR, token, "ERROR!! INVALID CHAR TOKEN");
+      }
+      token = createCharToken(startColumn, length, tokenizer->str, temp);
+    }
+    else
+    {
+      for(int k = 0; k < (i+1); k = k + 1)
+      {
+        if(k == i)
+        {
+          temp[k] = '\0';
+        }
+        else
+        {
+          temp[k] = tokenizer->str[startColumn + k];
+        }
+      }
+      token = createStringToken(startColumn, length, tokenizer->str, temp);
+    }
   }
   else if(isdigit(tokenizer->str[tokenizer->index]) == 1)   //if detect digit, check wether is integer, floating point or invalid token
   {
