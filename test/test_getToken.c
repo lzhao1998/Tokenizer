@@ -24,7 +24,7 @@ void test_skipWhiteSpaces_given____Hello_string_expect_to_skip_till_H() {
 
   TEST_ASSERT_EQUAL('H', *endPtr);
 }*/
-
+//INETEGER
 void test_getToken_given_NULL_expect_NULL_TOKEN() {
   Token *token;
   IdentifierToken *IdToken;
@@ -39,12 +39,12 @@ void test_getToken_given_NULL_expect_NULL_TOKEN() {
   freeToken(token);
 }
 
-void xtest_getToken_given_123_expect_Integer_Token_123() {
+void test_getToken_given_123_expect_Integer_Token_123() {
   Token *token;
   IntegerToken *intToken;
   Tokenizer *tokenizer;
 
-  tokenizer = initTokenizer(" 123");
+  tokenizer = initTokenizer("123");
   token = getToken(tokenizer);
   intToken = (IntegerToken *)token;
 
@@ -55,7 +55,71 @@ void xtest_getToken_given_123_expect_Integer_Token_123() {
   freeToken(intToken);
 }
 
-void xtest_getToken_given_0xface_expect_Integer_Token_0xface() {
+void test_getToken_given_space_123_expect_Integer_Token_123() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("   123");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL(123, intToken->value);
+  TEST_ASSERT_EQUAL_STRING("123", intToken->str);
+  freeToken(intToken);
+}
+
+void test_getToken_given_000_expect_Integer_Token_0() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("000");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL(0, intToken->value);
+  TEST_ASSERT_EQUAL_STRING("000", intToken->str);
+  freeToken(intToken);
+}
+
+void test_getToken_given_0x0_expect_Integer_Token_0() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0x0");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL(0, intToken->value);
+  TEST_ASSERT_EQUAL_STRING("0x0", intToken->str);
+  freeToken(intToken);
+}
+
+void test_getToken_given_123_space_expect_Integer_Token_123() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("123   ");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL(123, intToken->value);
+  TEST_ASSERT_EQUAL_STRING("123", intToken->str);
+  freeToken(intToken);
+}
+
+void test_getToken_given_0xface_expect_Integer_Token_0xface() {
   Token *token;
   IntegerToken *intToken;
   Tokenizer *tokenizer;
@@ -71,6 +135,140 @@ void xtest_getToken_given_0xface_expect_Integer_Token_0xface() {
   freeToken(intToken);
 }
 
+void test_getToken_given_0xABCD_expect_Integer_Token_0xabcd() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer(" 0xABCD ");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL_STRING("0xABCD", intToken->str);
+  TEST_ASSERT_EQUAL(0xabcd, intToken->value);
+  freeToken(intToken);
+}
+
+void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
+  CEXCEPTION_T ex;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0xfaz");
+
+  Try{
+    intToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
+  }
+  freeToken(ex->data);
+}
+
+void test_getToken_given_0x12za_expect_return_ERR_INVALID_TOKEN() {
+  CEXCEPTION_T ex;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0x12za");
+
+  Try{
+    intToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
+  }
+  freeToken(ex->data);
+}
+
+//Float
+void test_getToken_given_1dot23_expect_Float_Token_1dot23() {
+  Token *token;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("1.23");
+  token = getToken(tokenizer);
+  floatToken = (FloatToken *)token;
+
+  TEST_ASSERT_NOT_NULL(floatToken);
+  TEST_ASSERT_EQUAL(TOKEN_FLOAT_TYPE, floatToken->type);
+  TEST_ASSERT_EQUAL(1.23, floatToken->value);
+  TEST_ASSERT_EQUAL_STRING("1.23", floatToken->str);
+  freeToken(floatToken);
+}
+
+void test_getToken_given_1dot_expect_Float_Token_1() {
+  Token *token;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("1.");
+  token = getToken(tokenizer);
+  floatToken = (FloatToken *)token;
+
+  TEST_ASSERT_NOT_NULL(floatToken);
+  TEST_ASSERT_EQUAL(TOKEN_FLOAT_TYPE, floatToken->type);
+  TEST_ASSERT_EQUAL(1.000, floatToken->value);
+  TEST_ASSERT_EQUAL_STRING("1.", floatToken->str);
+  freeToken(floatToken);
+}
+
+void test_getToken_given_0dot123_expect_Float_Token_0dot123() {
+  Token *token;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.123");
+  token = getToken(tokenizer);
+  floatToken = (FloatToken *)token;
+
+  TEST_ASSERT_NOT_NULL(floatToken);
+  TEST_ASSERT_EQUAL(TOKEN_FLOAT_TYPE, floatToken->type);
+  TEST_ASSERT_EQUAL(0.123, floatToken->value);
+  TEST_ASSERT_EQUAL_STRING("0.123", floatToken->str);
+  freeToken(floatToken);
+}
+
+void test_getToken_given_0dot123E_plus_4_expect_Float_Token_1230() {
+  Token *token;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.123e+4");
+  token = getToken(tokenizer);
+  floatToken = (FloatToken *)token;
+
+  TEST_ASSERT_NOT_NULL(floatToken);
+  TEST_ASSERT_EQUAL(TOKEN_FLOAT_TYPE, floatToken->type);
+  TEST_ASSERT_EQUAL(1230, floatToken->value);
+  TEST_ASSERT_EQUAL_STRING("0.123e+4", floatToken->str);
+  freeToken(floatToken);
+}
+
+void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
+  CEXCEPTION_T ex;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("4e");
+
+  Try{
+    floatToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
+  freeToken(ex->data);
+}
 
  //STRING
  void test_getToken_given_string_empty_expect_String_Token_empty() {
@@ -186,6 +384,38 @@ void test_getToken_given_string_123hello_expect_String_Token_hello123() {
   freeToken(strToken);
 }
 
+void test_getToken_given_string_1_expect_String_Token_1() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\"1\"");
+  token = getToken(tokenizer);
+  strToken = (StringToken *)token;
+
+  TEST_ASSERT_NOT_NULL(strToken);
+  TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
+  TEST_ASSERT_EQUAL_STRING("1", strToken->str);
+  TEST_ASSERT_EQUAL(3, tokenizer->index);
+  freeToken(strToken);
+}
+
+void test_getToken_given_string_a_expect_String_Token_a() {
+  Token *token;
+  StringToken *strToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\"a\"");
+  token = getToken(tokenizer);
+  strToken = (StringToken *)token;
+
+  TEST_ASSERT_NOT_NULL(strToken);
+  TEST_ASSERT_EQUAL(TOKEN_STRING_TYPE, strToken->type);
+  TEST_ASSERT_EQUAL_STRING("a", strToken->str);
+  TEST_ASSERT_EQUAL(3, tokenizer->index);
+  freeToken(strToken);
+}
+
 void test_getToken_given_string_symbol_expect_String_Token_symbol() {
   Token *token;
   StringToken *strToken;
@@ -204,7 +434,6 @@ void test_getToken_given_string_symbol_expect_String_Token_symbol() {
 
 void test_getToken_given_string_hello_without_closing_ampersand_sign_expect_return_INVALID_STRING_TYPE() {
   CEXCEPTION_T ex;
-  Token *token;
   StringToken *strToken;
   Tokenizer *tokenizer;
 
@@ -288,7 +517,6 @@ void test_getToken_given_string_hello_world_using_quotation_expect_String_Token_
 
 void test_getToken_given_string_hello_without_closing_quotation_sign_expect_return_INVALID_STRING_TYPE() {
   CEXCEPTION_T ex;
-  Token *token;
   StringToken *strToken;
   Tokenizer *tokenizer;
 
@@ -340,7 +568,6 @@ void test_getToken_given_char_d_space_expect_Char_Token_d() {
 
 void test_getToken_given_char_symbol_expect_return_INVALID_CHAR_TYPE() {
   CEXCEPTION_T ex;
-  Token *token;
   CharConstToken *charToken;
   Tokenizer *tokenizer;
 
@@ -359,7 +586,6 @@ void test_getToken_given_char_symbol_expect_return_INVALID_CHAR_TYPE() {
 
 void test_getToken_given_char_number_expect_return_INVALID_CHAR_TYPE() {
   CEXCEPTION_T ex;
-  Token *token;
   CharConstToken *charToken;
   Tokenizer *tokenizer;
 
@@ -438,6 +664,38 @@ void test_getToken_given_identifier__hp_omen_expect_Identifier_Token__hp_omen() 
   TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE, IdToken->type);
   TEST_ASSERT_EQUAL_STRING("_hp_omen", IdToken->str);
   TEST_ASSERT_EQUAL(8, tokenizer->index);
+  freeToken(IdToken);
+}
+
+void test_getToken_given_identifier_h_expect_Identifier_Token_h() {
+  Token *token;
+  IdentifierToken *IdToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("h");
+  token = getToken(tokenizer);
+  IdToken = (IdentifierToken *)token;
+
+  TEST_ASSERT_NOT_NULL(IdToken);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE, IdToken->type);
+  TEST_ASSERT_EQUAL_STRING("h", IdToken->str);
+  TEST_ASSERT_EQUAL(1, tokenizer->index);
+  freeToken(IdToken);
+}
+
+void test_getToken_given_identifier_E_expect_Identifier_Token_E() {
+  Token *token;
+  IdentifierToken *IdToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("E");
+  token = getToken(tokenizer);
+  IdToken = (IdentifierToken *)token;
+
+  TEST_ASSERT_NOT_NULL(IdToken);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE, IdToken->type);
+  TEST_ASSERT_EQUAL_STRING("E", IdToken->str);
+  TEST_ASSERT_EQUAL(1, tokenizer->index);
   freeToken(IdToken);
 }
 
@@ -524,14 +782,31 @@ void test_getToken_given_identifier_hello_world_space_expect_Identifier_Token_he
 
 void test_getToken_given_identifier_zeez_symbol_expect_return_INVALID_IDENTIFIER_TYPE() {
   CEXCEPTION_T ex;
-  Token *token;
   IdentifierToken *IdToken;
   Tokenizer *tokenizer;
 
   tokenizer = initTokenizer("_zeez#");
 
   Try{
-    token = getToken(tokenizer);
+    IdToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_IDENTIFIER, ex->errorCode);
+  }
+  freeToken(ex->data);
+}
+
+void test_getToken_given_identifier_zeez_dot_abc_expect_return_INVALID_IDENTIFIER_TYPE() {
+  CEXCEPTION_T ex;
+  IdentifierToken *IdToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("_zeez.abc");
+
+  Try{
+    IdToken = getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but No");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
@@ -652,4 +927,170 @@ void test_getToken_given_operator_symbol_expect_Operator_Token_symbol() {
   TEST_ASSERT_EQUAL_STRING("/*-+!@#$", OpToken->str);
   TEST_ASSERT_EQUAL(9, tokenizer->index);
   freeToken(OpToken);
+}
+
+void test_getToken_given_operator_or_expect_Operator_Token_or() {
+  Token *token;
+  OperatorToken *OpToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("||");
+  token = getToken(tokenizer);
+  OpToken = (OperatorToken *)token;
+
+  TEST_ASSERT_NOT_NULL(OpToken);
+  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
+  TEST_ASSERT_EQUAL_STRING("||", OpToken->str);
+  TEST_ASSERT_EQUAL(2, tokenizer->index);
+  freeToken(OpToken);
+}
+
+void test_getToken_given_operator_or_abc_expect_Operator_Token_or() {
+  Token *token;
+  OperatorToken *OpToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("||abc");
+  token = getToken(tokenizer);
+  OpToken = (OperatorToken *)token;
+
+  TEST_ASSERT_NOT_NULL(OpToken);
+  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
+  TEST_ASSERT_EQUAL_STRING("||", OpToken->str);
+  TEST_ASSERT_EQUAL(2, tokenizer->index);
+  freeToken(OpToken);
+}
+
+
+
+//test for 'checkFor0x' function
+void test_gv_0x12_return_1()
+{
+  char *temp = "0x12";
+  int i = checkFor0x(temp);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_gv_0x_return_1()
+{
+  char *temp = "0x";
+  int i = checkFor0x(temp);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_gv_0X12_return_0()
+{
+  char *temp = "0X12";
+  int i = checkFor0x(temp);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+
+void test_gv_12_dot_3_return_0()
+{
+  char *temp = "12.3";
+  int i = checkFor0x(temp);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+//test for 'checkForHexDigit' function
+void test_given_1234_expect_return_1()
+{
+  char *str = "1234";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_123ABC_expect_return_1()
+{
+  char *str = "123ABC";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_123Abc_expect_return_1()
+{
+  char *str = "123Abc";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_123ABCEF_expect_return_1()
+{
+  char *str = "123ABCEF";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_123EFG_expect_return_0()
+{
+  char *str = "123EFG";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+
+void test_given_0x23_expect_return_0()
+{
+  char *str = "0x23";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+
+
+void test_given_123abc_expect_return_1()
+{
+  char *str = "123abc";
+  int i = checkForHexDigit(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+//test for 'checkforInt' function
+void test_given_123_expect_return_1()
+{
+  char *str = "123";
+  int i = checkforInt(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_123dot4_expect_return_0()
+{
+  char *str = "123.4";
+  int i = checkforInt(str);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+
+void test_given_123abcd_expect_return_0()
+{
+  char *str = "123abcd";
+  int i = checkforInt(str);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+
+void test_given_123null_expect_return_1()
+{
+  char *str = "123\0";
+  int i = checkforInt(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+// test convert to hex method
+void test_convertToHex()
+{
+  char *str = "0x2a3";
+  int i =0;
+  i = convertHexToInt(str);
+  printf("i is %x\n", i);
 }

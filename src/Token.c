@@ -20,8 +20,8 @@ Token *createIntegerToken(int startColumn, int length, char *originalString, cha
   token->type = TOKEN_INTEGER_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  strcpy(token->originalStr,originalString);
-  strcpy(token->str,str);
+  token->originalStr = originalString;  
+  token->str = str;
   token->value = value;
 
   return (Token *)token;

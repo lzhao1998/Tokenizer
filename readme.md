@@ -9,7 +9,7 @@ Tokenizer
   -0.12e+13
   -1.013
   -2.
-  -2E
+
 
 3. String
   -"Hello"

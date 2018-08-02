@@ -26,7 +26,7 @@ char *createSubstring(char *str, int start, int len) {
   char *newStr = malloc(len + 1);
 
   //printf("%s (%d, %d)\n", str, start, len);
-  
+
   memcpy(newStr, &str[start], len);
   newStr[len] = 0;
   return newStr;
