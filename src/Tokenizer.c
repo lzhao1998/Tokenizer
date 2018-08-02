@@ -69,9 +69,6 @@ Token *getToken(Tokenizer *tokenizer) {
     }
     token = createStringToken(startColumn, length, tokenizer->str, temp);
     //free(temp);
-  //strcpy(token->currentToken->str,temp);
-  //  free(temp);
-    //divide to 2 or only one? '  or "
   }
   else if(tokenizer->str[tokenizer->index] == '\'')//if detect ' , check it is string, character or invalid token
   {
@@ -125,15 +122,69 @@ Token *getToken(Tokenizer *tokenizer) {
   }
   else if(isdigit(tokenizer->str[tokenizer->index]) == 1)   //if detect digit, check wether is integer, floating point or invalid token
   {
-
+    token = createNullToken();
+    return token;
   }
-  else if(ispunct(tokenizer->str[tokenizer->index]) == 1)   //if detect punctuation character, check wether is the operator or not
+  else if(isalpha(tokenizer->str[tokenizer->index]) != 0 || tokenizer->str[tokenizer->index] == '_') //if detect _ or alpha, check is identifier or not
   {
-
+    startColumn = tokenizer->index;
+    i = 1; // for the 1st char/underscore
+    //while is not space or NULL, keep checking until it hit the space or NULL
+    while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0') {
+      tokenizer->index++;
+      i++;
+    }
+    char *temp = (char*)malloc((i) * sizeof (char));	//get the length of the string and last is for NULL/end of string
+    length = i - 1;     //length = i , because i start from 0 so length no need to equal i - 1
+    for(int k = 0; k < i; k = k + 1)
+    {
+      if(k == (i-1))
+      {
+        temp[k] = '\0';
+      }
+      else
+      {
+        if(isalnum(tokenizer->str[startColumn + k]) != 0 || tokenizer->str[startColumn + k] == '_' )
+        {
+          temp[k] = tokenizer->str[startColumn + k];
+        }
+        else
+        {
+          length = i;
+          token = createInvalidToken(tokenizer->str, startColumn, length);
+          throwException(ERR_INVALID_IDENTIFIER, token, "ERROR!! INVALID TOKEN");
+        }
+      }
+    }
+    token = createIdentifierToken(startColumn, length, tokenizer->str, temp);
   }
-  else if(isalpha(tokenizer->str[tokenizer->index]) || tokenizer->str[tokenizer->index] == '_') //if detect _ or alpha, check is identifier or not
-  {return NULL;}
-  else{return NULL;}
-	//return NULL;
+  else if(ispunct(tokenizer->str[tokenizer->index]))   //if detect punctuation character, check wether is the operator or not
+  {
+    startColumn = tokenizer->index;
+    i = 1; // for the 1st char/underscore
+    //while is not space or NULL, keep checking until it hit the space or NULL
+    while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0' && ispunct(tokenizer->str[tokenizer->index]) != 0) {
+      tokenizer->index++;
+      i++;
+    }
+    char *temp = (char*)malloc((i) * sizeof (char));	//get the length of the string and last is for NULL/end of string
+    if(i == 1) {length = i ;}     //length = i , because i start from 0 so length no need to equal i - 1
+    else{length = i -1;}
+    for(int k = 0; k < i; k++)
+    {
+      if(k == i-1)
+      {
+        temp[k] = '\0';
+      }
+      else
+      {
+        temp[k] = tokenizer->str[startColumn + k];
+      }
+    }
+    token = createOperatorToken(startColumn, length, tokenizer->str, temp);
+  }
+  else{
+    token = createNullToken();
+  }
   return token;
 }

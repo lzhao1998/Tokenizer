@@ -87,7 +87,7 @@ Token *createFloatToken(int startColumn, int length, char *originalString, char 
 Token *createIdentifierToken(int startColumn, int length, char *originalString, char *str);
 Token *createStringToken(int startColumn, int length, char *originalString, char *str);
 Token *createCharToken(int startColumn, int length, char *originalString, char *str);
-Token *createOperatorToken(int startColumn, int length, char *originalString, char *str, Token *token);
+Token *createOperatorToken(int startColumn, int length, char *originalString, char *symbol);
 
 void freeToken(void *token);
 void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo);

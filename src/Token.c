@@ -72,22 +72,20 @@ Token *createCharToken(int startColumn, int length, char *originalString, char *
   token->type = TOKEN_CHAR_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->originalStr = originalString;
   token->str = str;
-  //strcpy(token->originalStr,originalString);
-  //strcpy(token->str,str);
 
   return (Token *)token;
 }
 
-Token *createOperatorToken(int startColumn, int length, char *originalString, char *str, Token *zoken) {
+Token *createOperatorToken(int startColumn, int length, char *originalString, char *symbol) {
   OperatorToken *token = malloc(sizeof(OperatorToken));
 
   token->type = TOKEN_OPERATOR_TYPE;
   token->startColumn = startColumn;
   token->length = length;
   token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
-  token->str = str;
+  token->str = symbol;
   //token *[0]
 
   return (Token *)token;

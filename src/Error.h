@@ -9,5 +9,7 @@
 #define ERR_INVALID_CHAR	   	    32
 #define ERR_INVALID_INTEGER       41
 #define ERR_INVALID_FLOAT         42
+#define ERR_INVALID_IDENTIFIER    50
+#define ERR_INVALID_OPERATOR      51
 
 #endif // Error_H
