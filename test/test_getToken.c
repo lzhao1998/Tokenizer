@@ -270,6 +270,23 @@ void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
   freeToken(ex->data);
 }
 
+void test_getToken_given_123hello_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
+  CEXCEPTION_T ex;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("123hello");
+Try{
+  intToken = getToken(tokenizer);
+  TEST_FAIL_MESSAGE("Expect Error but No");
+}Catch(ex){
+  dumpTokenErrorMessage(ex, 1);
+  TEST_ASSERT_NOT_NULL(ex);
+  TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+}
+  freeToken(ex->data);
+}
+
  //STRING
  void test_getToken_given_string_empty_expect_String_Token_empty() {
    Token *token;
@@ -780,40 +797,36 @@ void test_getToken_given_identifier_hello_world_space_expect_Identifier_Token_he
   freeToken(IdToken);
 }
 
-void test_getToken_given_identifier_zeez_symbol_expect_return_INVALID_IDENTIFIER_TYPE() {
-  CEXCEPTION_T ex;
-  IdentifierToken *IdToken;
-  Tokenizer *tokenizer;
-
-  tokenizer = initTokenizer("_zeez#");
-
-  Try{
-    IdToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
-  }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_INVALID_IDENTIFIER, ex->errorCode);
-  }
-  freeToken(ex->data);
-}
-
-void test_getToken_given_identifier_zeez_dot_abc_expect_return_INVALID_IDENTIFIER_TYPE() {
-  CEXCEPTION_T ex;
+void test_getToken_given_identifier_zeez_dot_abc_expect_return__zeez() {
+  Token *token;
   IdentifierToken *IdToken;
   Tokenizer *tokenizer;
 
   tokenizer = initTokenizer("_zeez.abc");
+  token = getToken(tokenizer);
+  IdToken = (IdentifierToken *)token;
 
-  Try{
-    IdToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
-  }Catch(ex){
-    dumpTokenErrorMessage(ex, 1);
-    TEST_ASSERT_NOT_NULL(ex);
-    TEST_ASSERT_EQUAL(ERR_INVALID_IDENTIFIER, ex->errorCode);
-  }
-  freeToken(ex->data);
+  TEST_ASSERT_NOT_NULL(IdToken);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE, IdToken->type);
+  TEST_ASSERT_EQUAL_STRING("_zeez", IdToken->str);
+  TEST_ASSERT_EQUAL(5, tokenizer->index);
+  freeToken(IdToken);
+}
+
+void test_getToken_given_identifier_zeez_symbol_expect_return_zeez() {
+  Token *token;
+  IdentifierToken *IdToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("_zeez#");
+  token = getToken(tokenizer);
+  IdToken = (IdentifierToken *)token;
+
+  TEST_ASSERT_NOT_NULL(IdToken);
+  TEST_ASSERT_EQUAL(TOKEN_IDENTIFIER_TYPE, IdToken->type);
+  TEST_ASSERT_EQUAL_STRING("_zeez", IdToken->str);
+  TEST_ASSERT_EQUAL(5, tokenizer->index);
+  freeToken(IdToken);
 }
 
 //OPERATOR
@@ -844,12 +857,12 @@ void test_getToken_given_operator_minus_plus_expect_Operator_Token_minus_plus() 
 
   TEST_ASSERT_NOT_NULL(OpToken);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
-  TEST_ASSERT_EQUAL_STRING("-+", OpToken->str);
-  TEST_ASSERT_EQUAL(2, tokenizer->index);
+  TEST_ASSERT_EQUAL_STRING("-", OpToken->str);
+  TEST_ASSERT_EQUAL(1, tokenizer->index);
   freeToken(OpToken);
 }
 
-void test_getToken_given_operator_and_expect_Operator_Token_and() {
+void test_getToken_given_operator_and_expect_Operator_Token_ampersand() {
   Token *token;
   OperatorToken *OpToken;
   Tokenizer *tokenizer;
@@ -860,8 +873,8 @@ void test_getToken_given_operator_and_expect_Operator_Token_and() {
 
   TEST_ASSERT_NOT_NULL(OpToken);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
-  TEST_ASSERT_EQUAL_STRING("&&", OpToken->str);
-  TEST_ASSERT_EQUAL(2, tokenizer->index);
+  TEST_ASSERT_EQUAL_STRING("&", OpToken->str);
+  TEST_ASSERT_EQUAL(1, tokenizer->index);
   freeToken(OpToken);
 }
 
@@ -881,7 +894,7 @@ void test_getToken_given_space_power_and_expect_Operator_Token_power() {
   freeToken(OpToken);
 }
 
-void test_getToken_given_operator_bracket_expect_Operator_Token_bracket() {
+void test_getToken_given_operator_bracket_expect_Operator_Token_openBracket() {
   Token *token;
   OperatorToken *OpToken;
   Tokenizer *tokenizer;
@@ -892,8 +905,8 @@ void test_getToken_given_operator_bracket_expect_Operator_Token_bracket() {
 
   TEST_ASSERT_NOT_NULL(OpToken);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
-  TEST_ASSERT_EQUAL_STRING("()", OpToken->str);
-  TEST_ASSERT_EQUAL(2, tokenizer->index);
+  TEST_ASSERT_EQUAL_STRING("(", OpToken->str);
+  TEST_ASSERT_EQUAL(1, tokenizer->index);
   freeToken(OpToken);
 }
 
@@ -913,7 +926,7 @@ void test_getToken_given_operator_space_dot123_expect_Operator_Token_dot() {
   freeToken(OpToken);
 }
 
-void test_getToken_given_operator_symbol_expect_Operator_Token_symbol() {
+void test_getToken_given_operator_symbol_expect_Operator_Token_slash() {
   Token *token;
   OperatorToken *OpToken;
   Tokenizer *tokenizer;
@@ -924,28 +937,13 @@ void test_getToken_given_operator_symbol_expect_Operator_Token_symbol() {
 
   TEST_ASSERT_NOT_NULL(OpToken);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
-  TEST_ASSERT_EQUAL_STRING("/*-+!@#$", OpToken->str);
-  TEST_ASSERT_EQUAL(9, tokenizer->index);
-  freeToken(OpToken);
-}
-
-void test_getToken_given_operator_or_expect_Operator_Token_or() {
-  Token *token;
-  OperatorToken *OpToken;
-  Tokenizer *tokenizer;
-
-  tokenizer = initTokenizer("||");
-  token = getToken(tokenizer);
-  OpToken = (OperatorToken *)token;
-
-  TEST_ASSERT_NOT_NULL(OpToken);
-  TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
-  TEST_ASSERT_EQUAL_STRING("||", OpToken->str);
+  TEST_ASSERT_EQUAL_STRING("/", OpToken->str);
   TEST_ASSERT_EQUAL(2, tokenizer->index);
   freeToken(OpToken);
 }
 
-void test_getToken_given_operator_or_abc_expect_Operator_Token_or() {
+
+void test_getToken_given_operator_or_abc_expect_Operator_Token_and() {
   Token *token;
   OperatorToken *OpToken;
   Tokenizer *tokenizer;
@@ -956,8 +954,8 @@ void test_getToken_given_operator_or_abc_expect_Operator_Token_or() {
 
   TEST_ASSERT_NOT_NULL(OpToken);
   TEST_ASSERT_EQUAL(TOKEN_OPERATOR_TYPE, OpToken->type);
-  TEST_ASSERT_EQUAL_STRING("||", OpToken->str);
-  TEST_ASSERT_EQUAL(2, tokenizer->index);
+  TEST_ASSERT_EQUAL_STRING("|", OpToken->str);
+  TEST_ASSERT_EQUAL(1, tokenizer->index);
   freeToken(OpToken);
 }
 

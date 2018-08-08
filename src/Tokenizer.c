@@ -183,7 +183,8 @@ Token *getToken(Tokenizer *tokenizer) {
     startColumn = tokenizer->index;
     i = 1; // for the 1st char/underscore
     //while is not space or NULL, keep checking until it hit the space or NULL
-    while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0' ) { //&& isalnum(tokenizer->str[tokenizer->index]) != 0
+    while((isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0') \
+          && (isalnum(tokenizer->str[tokenizer->index]) != 0 || tokenizer->str[tokenizer->index] == '_')) {
       tokenizer->index++;
       i++;
     }
@@ -215,25 +216,11 @@ Token *getToken(Tokenizer *tokenizer) {
   {
     startColumn = tokenizer->index;
     i = 1; // for the 1st char/underscore
-    //while is not space or NULL, keep checking until it hit the space or NULL
-    while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0' && ispunct(tokenizer->str[tokenizer->index]) != 0) {
-      tokenizer->index++;
-      i++;
-    }
-    char *temp = (char*)malloc((i) * sizeof (char));	//get the length of the string and last is for NULL/end of string
-    if(i == 1) {length = i ;}     //length = i , because i start from 0 so length no need to equal i - 1
-    else{length = i -1;}
-    for(int k = 0; k < i; k++)
-    {
-      if(k == i-1)
-      {
-        temp[k] = '\0';
-      }
-      else
-      {
-        temp[k] = tokenizer->str[startColumn + k];
-      }
-    }
+    tokenizer->index++;
+    char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
+    length = i;
+    temp[0] = tokenizer->str[startColumn];
+    temp[1] = '\0';
     token = createOperatorToken(startColumn, length, tokenizer->str, temp);
   }
   else{
