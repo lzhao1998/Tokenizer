@@ -10,11 +10,16 @@
 #include "CException.h"
 #include "Exception.h"
 
+/**
+*  Initialise the tokenizer....
+*  Copy the stringToTokenize to tokenizer->string
+*  Put tokenizer->index to 0 (for start counting)
+**/
 Tokenizer *initTokenizer(char *stringToTokenize) {
   Tokenizer *token = NULL;
   token = (Tokenizer*)malloc(sizeof(Tokenizer));
   token->str = stringToTokenize;
-  token->index = 0;					//start for index 0 to count
+  token->index = 0;
   return (Tokenizer*)token;
 }
 
@@ -23,39 +28,63 @@ Token *getToken(Tokenizer *tokenizer) {
   double floatValue = 0;
   Token *token = NULL;
   token = (Token*)malloc(sizeof(Token));
-  if(tokenizer->str[tokenizer->index] == '\0') //if it is NULL, create NULL token (DONE)
+  /**
+  *   If the current character is NULL, create NULL token
+  *   Else skip it
+  **/
+  if(tokenizer->str[tokenizer->index] == '\0')
   {
     token = createNullToken();
     return token;
   }
-  while(tokenizer->str[tokenizer->index] == ' ') //skip the unwanted space (DONE)
+  /**skip the unwanted space**/
+  while(tokenizer->str[tokenizer->index] == ' ')
   {
     tokenizer->index++;
   }
 
-  if(tokenizer->str[tokenizer->index] == '\0') //after skip space and become NULL, create NULL token (DONE)
+  //  After skip space and current character become NULL, create NULL token
+  if(tokenizer->str[tokenizer->index] == '\0')
   {
     token = createNullToken();
   }
   else if(tokenizer->str[tokenizer->index] == '\"') //if detect " , check it is string or invalid token
   {
+    /**
+    *  tokenizer->index + 1 because to skip the "
+    *  Current tokenizer->index is the startColumn of this token
+    *
+    *  While it is not hitting another ", keep checking
+    *  Else exit loop
+    *  If is still not hitting " but hit NULL, throw error
+    **/
     tokenizer->index++;
     startColumn = tokenizer->index;
     while (tokenizer->str[tokenizer->index] != '\"') {
       if(tokenizer->str[tokenizer->index] == '\0')
       {
         length = i;
-        //startColumn - 1 is because needed include " sign
-        //length + 1 is because needed include " sign
+        /**
+        * ONLY FOR CREATING INVALID TOKEN
+        * startColumn - 1 is because needed include " sign
+        * length + 1 is because needed include " sign
+        **/
         token = createInvalidToken(tokenizer->str, startColumn-1, length+1);
         throwException(ERR_INVALID_STRING, token, "ERROR!! INVALID TOKEN");
       }
       tokenizer->index++;
       i++;
     }
+    /**
+    *  Length of string is same as i because i is starting from 0 and length of string is not included "
+    *  Malloc temp to the size of the needed string
+    *  Copy needed string to temp
+    *  If reached end of needed string, insert NULL after end of string
+    *  Create String token
+    **/
     char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
     tokenizer->index++;
-    length = i;     //length = i , because i start from 0 so length no need to equal i - 1
+    length = i;
     for(int k = 0; k < (i+1); k = k + 1)
     {
       if(k == i)
@@ -68,32 +97,52 @@ Token *getToken(Tokenizer *tokenizer) {
       }
     }
     token = createStringToken(startColumn, length, tokenizer->str, temp);
-    //free(temp);
   }
   else if(tokenizer->str[tokenizer->index] == '\'')//if detect ' , check it is string, character or invalid token
   {
+    /**
+    *  tokenizer->index + 1 because to skip the '
+    *  Current tokenizer->index is the startColumn of this token
+    *
+    *  While it is not hitting another ', keep checking
+    *  Else exit loop
+    *  If is still not hitting " but hit NULL, throw error
+    **/
     tokenizer->index++;
     startColumn = tokenizer->index;
     while (tokenizer->str[tokenizer->index] != '\'') {
       if(tokenizer->str[tokenizer->index] == '\0')
       {
         length = i;
-        //startColumn - 1 is because needed include " sign
-        //length + 1 is because needed include " sign
+        /**
+        * ONLY FOR CREATING INVALID TOKEN
+        * startColumn - 1 is because needed include " sign
+        * length + 1 is because needed include " sign
+        **/
         token = createInvalidToken(tokenizer->str, startColumn-1, length+1);
         throwException(ERR_INVALID_STRING, token, "ERROR!! INVALID STRING TOKEN");
       }
       tokenizer->index++;
       i++;
     }
+    /**
+    *  Length of string is same as i because i is starting from 0 and length of string is not included "
+    *  Malloc temp to the size of the needed string
+    *  Copy needed string to temp
+    *  If reached end of needed string, insert NULL after end of string
+    *
+    *  If the length is 1 then create Character token
+    *  Else create String token
+    *
+    * FOR CHARACTER TOKEN
+    * If the character is not alphabet. throw error
+    * Else throw error
+    **/
     char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
     tokenizer->index++;
-    length = i;     //length = i , because i start from 0 so length no need to equal i - 1
-    //if length = 1 do char, else do string
+    length = i;
     if(length == 1)
     {
-      //if is char, create CHAR_TOKEN
-      //else throw else
       if(isalpha(tokenizer->str[startColumn]) != 0){
         temp[0] = tokenizer->str[startColumn];
         temp[1] = '\0';
@@ -122,21 +171,32 @@ Token *getToken(Tokenizer *tokenizer) {
   }
   else if(isdigit(tokenizer->str[tokenizer->index]) != 0)   //if detect digit, check wether is integer, floating point or invalid token
   {
+    /**
+    *   Current tokenizer->index is the startColumn of this token
+    *   i = 1 is for the digit
+    *
+    *   When there is hit the space or NULL, exit looping
+    *   Else keep checking until it hit space or NULL
+    **/
     startColumn = tokenizer->index;
-    i = 1; // for the 1st char/underscore
-    //while is not space or NULL, keep checking until it hit the space or NULL
+    i = 1;
     while(isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0') {
       tokenizer->index++;
       i++;
     }
-    char *temp = (char*)malloc((i) * sizeof (char));	//get the length of the string and last is for NULL/end of string
-    if(i == 1) {length = i;}     //length = i , because i start from 0 so length no need to equal i - 1
+    /**
+    *  Because i start from 0
+    *  For i = 1, length = 1  and For i > 1, length = i - 1; because i start from 0
+    *
+    *  Malloc the temp to the size same as the string needed
+    *  Copy needed string to the temp;
+    *  If reached end of needed string, insert NULL after end of string
+    **/
+    char *temp = (char*)malloc((i) * sizeof (char));
+    if(i == 1) {length = i;}
     else{length = i - 1;}
-    //copy the string into the temp
     for(int k = 0; k < i; k++)
     {
-      //if k is not reach end of string, keep copy.
-      //else insert NULL at the end of string.
       if(k == i - 1){
         temp[k] = '\0';
       }
@@ -166,9 +226,12 @@ Token *getToken(Tokenizer *tokenizer) {
       token = createIntegerToken(startColumn, length, tokenizer->str, temp, value);
     }
     else{
-      char *ptr;
-      floatValue = strtod(temp, &ptr);
-      if(ptr[0] == '\0'){
+      //use strtod(string to double) to convert float(string) to floating value
+      char *endPtr;
+      floatValue = strtod(temp, &endPtr);
+      //if endPointer(endPtr) is NULL, which means converting float(string) to float is success create Float token
+      //else throw error
+      if(endPtr[0] == '\0'){
        token = createFloatToken(startColumn, length, tokenizer->str, temp, floatValue);
       }
       else{
@@ -180,42 +243,54 @@ Token *getToken(Tokenizer *tokenizer) {
   }
   else if(isalpha(tokenizer->str[tokenizer->index]) != 0 || tokenizer->str[tokenizer->index] == '_') //if detect _ or alpha, check is identifier or not
   {
+    /**
+    *   Current tokenizer->index is the startColumn of this token
+    *   i = 1 is for the first character/underscore
+    *
+    *   When there is hit the space or NULL or symbol(except underscore), exit looping
+    *   Else keep checking until it hit space or NULL
+    **/
     startColumn = tokenizer->index;
-    i = 1; // for the 1st char/underscore
-    //while is not space or NULL, keep checking until it hit the space or NULL
+    i = 1;
     while((isspace(tokenizer->str[tokenizer->index]) == 0 && tokenizer->str[tokenizer->index] != '\0') \
           && (isalnum(tokenizer->str[tokenizer->index]) != 0 || tokenizer->str[tokenizer->index] == '_')) {
       tokenizer->index++;
       i++;
     }
-    char *temp = (char*)malloc((i) * sizeof (char));	//get the length of the string and last is for NULL/end of string
+    /**
+    *  Because i start from 0
+    *  For i = 1, length = 1  and For i > 1, length = i - 1; because i start from 0
+    *
+    *  Malloc the temp to the size same as the string needed
+    *  Copy needed string to the temp;
+    *  If reached end of needed string, insert NULL after end of string
+    **/
+    char *temp = (char*)malloc((i) * sizeof (char));
     length = i - 1;     //length = i , because i start from 0 so length no need to equal i - 1
     for(int k = 0; k < i; k = k + 1)
     {
-      if(k == (i-1))
-      {
+      if(k == (i-1)){
         temp[k] = '\0';
       }
-      else
-      {
-        if(isalnum(tokenizer->str[startColumn + k]) != 0 || tokenizer->str[startColumn + k] == '_' )
-        {
-          temp[k] = tokenizer->str[startColumn + k];
-        }
-        else
-        {
-          length = i;
-          token = createInvalidToken(tokenizer->str, startColumn, length);
-          throwException(ERR_INVALID_IDENTIFIER, token, "ERROR!! INVALID TOKEN");
-        }
+      else{
+        temp[k] = tokenizer->str[startColumn + k];
       }
     }
     token = createIdentifierToken(startColumn, length, tokenizer->str, temp);
   }
   else if(ispunct(tokenizer->str[tokenizer->index]))   //if detect punctuation character, check wether is the operator or not
   {
+    /**
+    *   Current tokenizer->index is the startColumn of this token
+    *   i = 1 is for the first symbol
+    *
+    *   Length = 1;
+    *   Malloc the temp size same as symbol
+    *   Copy needed symbol to temp
+    *   Create Identifier token
+    **/
     startColumn = tokenizer->index;
-    i = 1; // for the 1st char/underscore
+    i = 1;
     tokenizer->index++;
     char *temp = (char*)malloc((i+1) * sizeof (char));	//get the length of the string and last is for NULL/end of string
     length = i;

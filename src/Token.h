@@ -76,12 +76,6 @@ typedef struct {
 
 Token *createNullToken();
 Token *createInvalidToken(char *originalString, int start, int len);
-/*
-Token *createIntegerToken(int value, char *originalString);
-Token *createFloatToken(double value, char *originalString);
-Token *createIdentifierToken(char *str, char *originalString);
-Token *createStringToken(uint32_t startColumn, uint32_t length, char *str, char *originalString);*/
-
 Token *createIntegerToken(int startColumn, int length, char *originalString, char *str, int value);
 Token *createFloatToken(int startColumn, int length, char *originalString, char *str, double value);
 Token *createIdentifierToken(int startColumn, int length, char *originalString, char *str);
