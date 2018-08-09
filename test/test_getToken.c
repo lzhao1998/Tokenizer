@@ -140,6 +140,23 @@ void test_getToken_given_0xface_expect_Integer_Token_0xface() {
   freeTokenizer(tokenizer);
 }
 
+void test_getToken_given_0xFae_expect_Integer_Token_0xfae() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer(" 0xFae ");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL_STRING("0xFae", intToken->str);
+  TEST_ASSERT_EQUAL(0xfae, intToken->value);
+  freeToken(intToken);
+  freeTokenizer(tokenizer);
+}
+
 void test_getToken_given_0xABCD_expect_Integer_Token_0xabcd() {
   Token *token;
   IntegerToken *intToken;
@@ -190,6 +207,25 @@ void test_getToken_given_0x12za_expect_return_ERR_INVALID_TOKEN() {
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
     TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_0z12_expect_return_ERR_INVALID_TOKEN() {
+  CEXCEPTION_T ex;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0z12");
+
+  Try{
+    intToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
   }
   freeToken(ex->data);
   freeTokenizer(tokenizer);
@@ -306,14 +342,14 @@ void test_getToken_given_123hello_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
   Tokenizer *tokenizer;
 
   tokenizer = initTokenizer("123hello");
-Try{
-  intToken = getToken(tokenizer);
-  TEST_FAIL_MESSAGE("Expect Error but No");
-}Catch(ex){
-  dumpTokenErrorMessage(ex, 1);
-  TEST_ASSERT_NOT_NULL(ex);
-  TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
-}
+  Try{
+    intToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
   freeToken(ex->data);
   freeTokenizer(tokenizer);
 }
@@ -1175,6 +1211,14 @@ void test_gv_0X12_return_0()
   TEST_ASSERT_EQUAL(0, i);
 }
 
+void test_gv_0z12_return_0()
+{
+  char *temp = "0z12";
+  int i = checkFor0x(temp);
+
+  TEST_ASSERT_EQUAL(0, i);
+}
+
 void test_gv_12_dot_3_return_0()
 {
   char *temp = "12.3";
@@ -1182,6 +1226,7 @@ void test_gv_12_dot_3_return_0()
 
   TEST_ASSERT_EQUAL(0, i);
 }
+
 //test for 'checkForHexDigit' function
 void test_given_1234_expect_return_1()
 {
