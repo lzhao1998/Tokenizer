@@ -84,6 +84,7 @@ Token *createCharToken(int startColumn, int length, char *originalString, char *
 Token *createOperatorToken(int startColumn, int length, char *originalString, char *symbol);
 
 void freeToken(void *token);
+void freeTokenizer(void *tokenizer);
 void dumpTokenErrorMessage(CEXCEPTION_T ex, int lineNo);
 
 #endif // Token_H

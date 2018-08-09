@@ -3,6 +3,7 @@
 #include <string.h>
 #include "Token.h"
 #include "Common.h"
+#include "Tokenizer.h"
 
 Token *createNullToken() {
   Token *token = malloc(sizeof(Token));
@@ -20,7 +21,7 @@ Token *createIntegerToken(int startColumn, int length, char *originalString, cha
   token->type = TOKEN_INTEGER_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  token->originalStr = originalString;  
+  token->originalStr = originalString;
   token->str = str;
   token->value = value;
 
@@ -105,6 +106,12 @@ Token *createInvalidToken(char *originalString, int start, int len) {
   token->startColumn = start;
   token->length = len;
   return token;
+}
+
+void freeTokenizer(void *tokenizer) {
+  if(tokenizer) {
+    free(tokenizer);
+  }
 }
 
 void freeToken(void *token) {
