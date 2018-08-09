@@ -9,9 +9,7 @@
 #include <stdio.h>
 
 void setUp(void) {}
-
 void tearDown(void) {}
-
 
 void test_skipWhiteSpaces_given_empty_string_expect_to_skip_till_end_of_string() {
   char *endPtr = skipWhiteSpaces("               ");
@@ -24,7 +22,7 @@ void test_skipWhiteSpaces_given____Hello_string_expect_to_skip_till_H() {
 
   TEST_ASSERT_EQUAL('H', *endPtr);
 }
-//INETEGER
+//NULL
 void test_getToken_given_NULL_expect_NULL_TOKEN() {
   Token *token;
   IdentifierToken *IdToken;
@@ -38,7 +36,7 @@ void test_getToken_given_NULL_expect_NULL_TOKEN() {
   TEST_ASSERT_EQUAL_STRING(NULL, token->str);
   freeToken(token);
 }
-
+//IntegerToken
 void test_getToken_given_123_expect_Integer_Token_123() {
   Token *token;
   IntegerToken *intToken;
@@ -597,6 +595,25 @@ void test_getToken_given_char_d_space_expect_Char_Token_d() {
   TEST_ASSERT_EQUAL_STRING("d", charToken->str);
   TEST_ASSERT_EQUAL(3, tokenizer->index);
   freeToken(charToken);
+}
+
+//should be string token or char token?
+void test_getToken_given_empty_char_expect_Char_Token() {
+  CEXCEPTION_T ex;
+  CharConstToken *charToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("\'\'");
+
+  Try{
+    charToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_CHAR, ex->errorCode);
+  }
+  freeToken(ex->data);
 }
 
 void test_getToken_given_char_symbol_expect_return_INVALID_CHAR_TYPE() {

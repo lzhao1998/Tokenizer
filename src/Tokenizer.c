@@ -132,6 +132,7 @@ Token *getToken(Tokenizer *tokenizer) {
     *  If reached end of needed string, insert NULL after end of string
     *
     *  If the length is 1 then create Character token
+    *  Else if the length is 0, throw error
     *  Else create String token
     *
     * FOR CHARACTER TOKEN
@@ -152,6 +153,11 @@ Token *getToken(Tokenizer *tokenizer) {
         throwException(ERR_INVALID_CHAR, token, "ERROR!! INVALID CHAR TOKEN");
       }
       token = createCharToken(startColumn, length, tokenizer->str, temp);
+    }
+    else if(length == 0)
+    {
+      token = createInvalidToken(tokenizer->str, startColumn-1, length+1);
+      throwException(ERR_INVALID_CHAR, token, "ERROR!! INVALID CHAR TOKEN");
     }
     else
     {
