@@ -226,10 +226,26 @@ Token *getToken(Tokenizer *tokenizer) {
     }
     //when it is integer value, create Integer token
      else if(checkforInt(temp) == 1){
-      //use atoi to convert int(string) to int
-      //sscanf(temp,"%d",&value);
-      value = atoi(temp);
-      token = createIntegerToken(startColumn, length, tokenizer->str, temp, value);
+       //use atoi to convert int(string) to int
+       //check for octal and decimal
+       if(temp[0] == '0')
+       {
+         if(checkForOctal(temp) == 1)
+         {
+           sscanf(temp,"%o",&value);
+           token = createIntegerToken(startColumn, length, tokenizer->str, temp, value);
+         }
+         else
+         {
+           token = createInvalidToken(tokenizer->str, startColumn, length);
+           throwException(ERR_INVALID_INTEGER, token, "ERROR!! INVALID TOKEN");
+         }
+       }
+       else
+       {
+         sscanf(temp,"%d",&value);
+         token = createIntegerToken(startColumn, length, tokenizer->str, temp, value);
+       }
     }
     else{
       //use strtod(string to double) to convert float(string) to floating value
@@ -342,6 +358,19 @@ int checkforInt(char *str)
   int j = strlen(str);
   for(int i = 0; i < j; i++){
     if(isdigit(str[i]) == 0){
+      return 0;
+    }
+  }
+  return 1;
+}
+
+int checkForOctal(char *str)
+{
+  int j = strlen(str);
+  int k;
+  for(int i = 0; i < j; i++){
+    k = str[i] - '0';
+    if(k > 7){
       return 0;
     }
   }

@@ -16,5 +16,6 @@ Token *getToken(Tokenizer *tokenizer);
 int checkFor0x(char *str);
 int checkForHexDigit(char *str);
 int checkforInt(char *str);
+int checkForOctal(char *str);
 
 #endif // Tokenizer_H

@@ -89,6 +89,59 @@ void test_getToken_given_000_expect_Integer_Token_0() {
   freeTokenizer(tokenizer);
 }
 
+void test_getToken_given_076_expect_Integer_Token_62() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("  076  ");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL(62, intToken->value);
+  TEST_ASSERT_EQUAL_STRING("076", intToken->str);
+  freeToken(intToken);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_038_expect_invalid_integer_exception_to_be_thrown() {
+  CEXCEPTION_T ex;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("038");
+
+  Try{
+    intToken = getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but No");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_INTEGER, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+/*
+void test_getToken_given_038_expect_invalid_integer_exception_to_be_thrown() {
+  Token *token;
+  IntegerToken *intToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("  038  ");
+  token = getToken(tokenizer);
+  intToken = (IntegerToken *)token;
+
+  TEST_ASSERT_NOT_NULL(intToken);
+  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
+  TEST_ASSERT_EQUAL(62, intToken->value);
+  TEST_ASSERT_EQUAL_STRING("076", intToken->str);
+  freeToken(intToken);
+  freeTokenizer(tokenizer);
+}*/
+
 void test_getToken_given_0x0_expect_Integer_Token_0() {
   Token *token;
   IntegerToken *intToken;
@@ -183,7 +236,7 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
 
   Try{
     intToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -237,7 +290,7 @@ void test_getToken_given_1dot23_expect_Float_Token_1dot23() {
   FloatToken *floatToken;
   Tokenizer *tokenizer;
 
-  tokenizer = initTokenizer("1.23");
+  tokenizer = initTokenizer("1.23  ");
   token = getToken(tokenizer);
   floatToken = (FloatToken *)token;
 
@@ -254,7 +307,7 @@ void test_getToken_given_1dot_expect_Float_Token_1() {
   FloatToken *floatToken;
   Tokenizer *tokenizer;
 
-  tokenizer = initTokenizer("1.");
+  tokenizer = initTokenizer("  1.");
   token = getToken(tokenizer);
   floatToken = (FloatToken *)token;
 
@@ -316,6 +369,30 @@ void test_getToken_given_0dot123E_plus_4_expect_Float_Token_1230() {
   freeToken(floatToken);
   freeTokenizer(tokenizer);
 }
+
+///////////////////////////////////////////////////////////////
+/*
+void test_getToken_given_0dot123E_plus_4_expect_Float_Token_1230() {
+  Token *token;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.123ee+4");
+  tokenizer = initTokenizer("0.123e+4e-7");
+  tokenizer = initTokenizer("0.123e+4.5");
+  tokenizer = initTokenizer("0.123e+-4");
+  tokenizer = initTokenizer("0.12.3e-4");
+
+  token = getToken(tokenizer);
+  floatToken = (FloatToken *)token;
+
+  TEST_ASSERT_NOT_NULL(floatToken);
+  TEST_ASSERT_EQUAL(TOKEN_FLOAT_TYPE, floatToken->type);
+  TEST_ASSERT_EQUAL(1230, floatToken->value);
+  TEST_ASSERT_EQUAL_STRING("0.123e+4", floatToken->str);
+  freeToken(floatToken);
+  freeTokenizer(tokenizer);
+}*/
 
 void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
   CEXCEPTION_T ex;
@@ -1316,4 +1393,29 @@ void test_given_123null_expect_return_1()
   int i = checkforInt(str);
 
   TEST_ASSERT_EQUAL(1, i);
+}
+
+//Test check value is over 8 or not
+void test_given_0123_expect_return_1()
+{
+  char *str = "0123";
+  int i = checkForOctal(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_0567_expect_return_1()
+{
+  char *str = "0567";
+  int i = checkForOctal(str);
+
+  TEST_ASSERT_EQUAL(1, i);
+}
+
+void test_given_08_expect_return_0()
+{
+  char *str = "08";
+  int i = checkForOctal(str);
+
+  TEST_ASSERT_EQUAL(0, i);
 }
