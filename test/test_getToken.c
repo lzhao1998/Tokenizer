@@ -1317,12 +1317,3 @@ void test_given_123null_expect_return_1()
 
   TEST_ASSERT_EQUAL(1, i);
 }
-
-// test convert to hex method
-void test_convertToHex()
-{
-  char *str = "0x2a3";
-  int i =0;
-  i = convertHexToInt(str);
-  printf("i is %x\n", i);
-}

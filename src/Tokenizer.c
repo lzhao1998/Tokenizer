@@ -347,12 +347,3 @@ int checkforInt(char *str)
   }
   return 1;
 }
-
-
-//just testing which method use to convert hex(string) to int
-int convertHexToInt(char *str)
-{
-  int i;
-  sscanf(str,"%x",&i);
-  return i;
-}

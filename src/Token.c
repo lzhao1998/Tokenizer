@@ -34,7 +34,7 @@ Token *createFloatToken(int startColumn, int length, char *originalString, char 
   token->type = TOKEN_FLOAT_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->originalStr = originalString;
   token->str = str;
   token->value = value;
 
@@ -47,7 +47,7 @@ Token *createIdentifierToken(int startColumn, int length, char *originalString, 
   token->type = TOKEN_IDENTIFIER_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->originalStr = originalString;
   token->str = str;
 
   return (Token *)token;
@@ -59,10 +59,8 @@ Token *createStringToken(int startColumn, int length, char *originalString, char
   token->type = TOKEN_STRING_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->originalStr = originalString;
   token->str = str;
-  //strcpy(token->originalStr,originalString);
-  //strcpy(token->str,str);
 
   return (Token *)token;
 }
@@ -85,9 +83,8 @@ Token *createOperatorToken(int startColumn, int length, char *originalString, ch
   token->type = TOKEN_OPERATOR_TYPE;
   token->startColumn = startColumn;
   token->length = length;
-  token->originalStr = originalString;      // need to use strcpy? cuz the str will not store forever;
+  token->originalStr = originalString;
   token->str = symbol;
-  //token *[0]
 
   return (Token *)token;
 }
@@ -102,7 +99,6 @@ Token *createInvalidToken(char *originalString, int start, int len) {
   endPtr = skipNonWhiteSpaces(&originalString[start + len]);
   len = (int)(endPtr - originalString) - start;
   token->str = createSubstring(originalString, start, len);
-  //printf("InvalidToken: %s\n", token->str);
   token->startColumn = start;
   token->length = len;
   return token;
