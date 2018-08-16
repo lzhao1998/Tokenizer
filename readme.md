@@ -20,14 +20,14 @@
   - "a"
 ````
 4. Character
-``
+```
   - 'a'
   - 'b'
-``
+```
 5. Operator
-`
+```
   - &&,!,@,||,&@
-`
+```
 6. Identifier
 ```
   - _value2_
@@ -35,4 +35,4 @@
   - _damnDaniel2
 ```
 
-:simple_smile:
+That's all for my tokenizer. :simple_smile:
