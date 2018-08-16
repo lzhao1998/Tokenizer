@@ -114,8 +114,8 @@ void test_getToken_given_038_expect_invalid_integer_exception_to_be_thrown() {
   tokenizer = initTokenizer("038");
 
   Try{
-    intToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    intToken = (IntegerToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -124,23 +124,6 @@ void test_getToken_given_038_expect_invalid_integer_exception_to_be_thrown() {
   freeToken(ex->data);
   freeTokenizer(tokenizer);
 }
-/*
-void test_getToken_given_038_expect_invalid_integer_exception_to_be_thrown() {
-  Token *token;
-  IntegerToken *intToken;
-  Tokenizer *tokenizer;
-
-  tokenizer = initTokenizer("  038  ");
-  token = getToken(tokenizer);
-  intToken = (IntegerToken *)token;
-
-  TEST_ASSERT_NOT_NULL(intToken);
-  TEST_ASSERT_EQUAL(TOKEN_INTEGER_TYPE, intToken->type);
-  TEST_ASSERT_EQUAL(62, intToken->value);
-  TEST_ASSERT_EQUAL_STRING("076", intToken->str);
-  freeToken(intToken);
-  freeTokenizer(tokenizer);
-}*/
 
 void test_getToken_given_0x0_expect_Integer_Token_0() {
   Token *token;
@@ -235,7 +218,7 @@ void test_getToken_given_0xfaz_expect_return_ERR_INVALID_TOKEN() {
   tokenizer = initTokenizer("0xfaz");
 
   Try{
-    intToken = getToken(tokenizer);
+    intToken = (IntegerToken *)getToken(tokenizer);
     TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
@@ -254,8 +237,8 @@ void test_getToken_given_0x12za_expect_return_ERR_INVALID_TOKEN() {
   tokenizer = initTokenizer("0x12za");
 
   Try{
-    intToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    intToken = (IntegerToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -273,8 +256,8 @@ void test_getToken_given_0z12_expect_return_ERR_INVALID_TOKEN() {
   tokenizer = initTokenizer("0z12");
 
   Try{
-    intToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    intToken = (IntegerToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -370,30 +353,6 @@ void test_getToken_given_0dot123E_plus_4_expect_Float_Token_1230() {
   freeTokenizer(tokenizer);
 }
 
-///////////////////////////////////////////////////////////////
-/*
-void test_getToken_given_0dot123E_plus_4_expect_Float_Token_1230() {
-  Token *token;
-  FloatToken *floatToken;
-  Tokenizer *tokenizer;
-
-  tokenizer = initTokenizer("0.123ee+4");
-  tokenizer = initTokenizer("0.123e+4e-7");
-  tokenizer = initTokenizer("0.123e+4.5");
-  tokenizer = initTokenizer("0.123e+-4");
-  tokenizer = initTokenizer("0.12.3e-4");
-
-  token = getToken(tokenizer);
-  floatToken = (FloatToken *)token;
-
-  TEST_ASSERT_NOT_NULL(floatToken);
-  TEST_ASSERT_EQUAL(TOKEN_FLOAT_TYPE, floatToken->type);
-  TEST_ASSERT_EQUAL(1230, floatToken->value);
-  TEST_ASSERT_EQUAL_STRING("0.123e+4", floatToken->str);
-  freeToken(floatToken);
-  freeTokenizer(tokenizer);
-}*/
-
 void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
   CEXCEPTION_T ex;
   FloatToken *floatToken;
@@ -402,8 +361,8 @@ void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
   tokenizer = initTokenizer("4e");
 
   Try{
-    floatToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -415,13 +374,103 @@ void test_getToken_given_4e_expect_return_ERR_INVALID_TOKEN() {
 
 void test_getToken_given_123hello_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
   CEXCEPTION_T ex;
-  IntegerToken *intToken;
+  FloatToken *floatToken;
   Tokenizer *tokenizer;
 
   tokenizer = initTokenizer("123hello");
   Try{
-    intToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_0dot444ee_plus_4_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
+  CEXCEPTION_T ex;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.444ee+4");
+  Try{
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_0dot567e_plus4e_minus7_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
+  CEXCEPTION_T ex;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.567e+4e-7");
+  Try{
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_0dot567e_plus4dot7_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
+  CEXCEPTION_T ex;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.567e+4.7");
+  Try{
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_0dot887e_plusminus7_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
+  CEXCEPTION_T ex;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.887e+-4");
+  Try{
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
+  }Catch(ex){
+    dumpTokenErrorMessage(ex, 1);
+    TEST_ASSERT_NOT_NULL(ex);
+    TEST_ASSERT_EQUAL(ERR_INVALID_FLOAT, ex->errorCode);
+  }
+  freeToken(ex->data);
+  freeTokenizer(tokenizer);
+}
+
+void test_getToken_given_0dot12dot3e_minus4_expect_throw_ERR_INVALID_FLOAT_TOKEN() {
+  CEXCEPTION_T ex;
+  FloatToken *floatToken;
+  Tokenizer *tokenizer;
+
+  tokenizer = initTokenizer("0.12.3e-4");
+  Try{
+    floatToken = (FloatToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -611,8 +660,8 @@ void test_getToken_given_string_hello_without_closing_ampersand_sign_expect_retu
   tokenizer = initTokenizer("\"hello");
 
   Try{
-    strToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    strToken = (StringToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -699,8 +748,8 @@ void test_getToken_given_string_hello_without_closing_quotation_sign_expect_retu
   tokenizer = initTokenizer("\'hello");
 
   Try{
-    strToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    strToken = (StringToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -754,8 +803,8 @@ void test_getToken_given_empty_char_expect_Char_Token() {
   tokenizer = initTokenizer("\'\'");
 
   Try{
-    charToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    charToken = (CharConstToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -773,8 +822,8 @@ void test_getToken_given_char_symbol_expect_return_INVALID_CHAR_TYPE() {
   tokenizer = initTokenizer("\'$\'");
 
   Try{
-    charToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    charToken = (CharConstToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
@@ -792,8 +841,8 @@ void test_getToken_given_char_number_expect_return_INVALID_CHAR_TYPE() {
   tokenizer = initTokenizer("\'1\'");
 
   Try{
-    charToken = getToken(tokenizer);
-    TEST_FAIL_MESSAGE("Expect Error but No");
+    charToken = (CharConstToken *)getToken(tokenizer);
+    TEST_FAIL_MESSAGE("Expect Error but none thrown");
   }Catch(ex){
     dumpTokenErrorMessage(ex, 1);
     TEST_ASSERT_NOT_NULL(ex);
