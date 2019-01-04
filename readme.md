@@ -1,5 +1,8 @@
 **Tokenizer**
-1. Integer
+Tokenizer is use to breaking up a sequence of strings into pieces such as words, keywords, phrases, symbols and other elements called tokens. 
+
+In this project, I break up a sequence of strings into few tokens which is:
+1. Integer - which include decimal, binary, octal and hexadecimal
 ````
    - decimal = 0,1,2,3,4,...
    - binary  = 0,1,10,11,100,...
@@ -35,4 +38,17 @@
   - _damnDaniel2
 ```
 
-That's all for my tokenizer. :simple_smile:
+**Example:**
+Input is " "Error" 132!  'z'   _not found  "in"  1.23e+2  'file'"
+
+*Result*
+``````
+Integer token:          132
+Floating point token:   1.23e+2
+String token:           Error, in, file
+Character token:        z
+Operator token:         !
+Identifier token:       _not
+``````
+
+That's all for my tokenizer. Thank you.
