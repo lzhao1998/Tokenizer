@@ -1,4 +1,4 @@
-**Tokenizer**
+**Tokenizer** <br />
 Tokenizer is use to breaking up a sequence of strings into pieces such as words, keywords, phrases, symbols and other elements called tokens. 
 
 In this project, I break up a sequence of strings into few tokens which is:
@@ -38,7 +38,7 @@ In this project, I break up a sequence of strings into few tokens which is:
   - _damnDaniel2
 ```
 
-**Example:**
+**Example:** <br />
 Input is " "Error" 132!  'z'   _not found  "in"  1.23e+2  'file'"
 
 *Result*
